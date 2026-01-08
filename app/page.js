@@ -19,12 +19,14 @@ export default function Home() {
 
   // 1. Send OTP
   const handleSendOtp = async () => {
+    if (!email) return alert("Please enter email");
     setLoading(true);
     try {
       await axios.post(`${API_URL}/auth/send-otp?email=${email}`);
       setStep('verify');
     } catch (e) {
-      alert('Error sending OTP. Check email.');
+      console.error(e);
+      alert('Error sending OTP. Check email or console.');
     }
     setLoading(false);
   };
@@ -61,13 +63,15 @@ export default function Home() {
     setLoading(true);
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('token', token);
     
     try {
-      await axios.post(`${API_URL}/jobs/upload`, formData);
+      // Передаем токен как query param, так как в MVP мы сделали так
+      await axios.post(`${API_URL}/jobs/upload?token=${token}`, formData);
       alert('Book uploaded! Processing started.');
+      setFile(null); // Сброс файла
       fetchJobs(token);
     } catch (e) {
+      console.error(e);
       alert('Upload failed');
     }
     setLoading(false);
@@ -156,11 +160,13 @@ export default function Home() {
             {jobs.map(job => (
               <div key={job.id} className="border p-4 mb-2 rounded flex justify-between items-center">
                 <div>
-                  <p className="font-bold">{job.input_filename}</p>
+                  {/* Исправлено: filename вместо input_filename */}
+                  <p className="font-bold">{job.filename}</p> 
                   <span className={`status-badge status-${job.status}`}>{job.status}</span>
                   <span className="text-xs text-gray-400 ml-2">{new Date(job.created_at).toLocaleString()}</span>
                 </div>
-                {job.status === 'done' && (
+                {/* Исправлено: completed вместо done */}
+                {job.status === 'completed' && (
                   <button 
                     onClick={() => handleDownload(job.id)}
                     className="w-auto px-4 py-1 mb-0 bg-green-600 hover:bg-green-700"
