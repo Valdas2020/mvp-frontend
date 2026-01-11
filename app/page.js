@@ -1,184 +1,196 @@
 'use client';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
-// ВАЖНО: Замени на URL своего API на Render (без слэша в конце)
-// Например: https://mvp-backend.onrender.com
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"; 
-
-export default function Home() {
-  const [step, setStep] = useState('login'); // login, verify, dashboard
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [token, setToken] = useState('');
-  const [user, setUser] = useState(null);
+export default function AlphaPortal() {
+  const [step, setStep] = useState(1); // 1: Code, 2: Profile, 3: App
   const [inviteCode, setInviteCode] = useState('');
-  const [file, setFile] = useState(null);
+  const [profile, setProfile] = useState({ name: '', email: '' });
+  const [token, setToken] = useState(null);
   const [jobs, setJobs] = useState([]);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 1. Send OTP
-  const handleSendOtp = async () => {
-    if (!email) return alert("Please enter email");
+  const API_URL = "https://mvp-backend-6r1j.onrender.com"; // ПРОВЕРЬ СВОЙ URL
+
+  // Проверка существующей сессии
+  useEffect(() => {
+    const savedToken = localStorage.getItem('alpha_token');
+    if (savedToken) {
+      setToken(savedToken);
+      setStep(3);
+      fetchJobs(savedToken);
+    }
+  }, []);
+
+  const handleCodeSubmit = () => {
+    if (inviteCode.length > 3) setStep(2);
+  };
+
+  const handleAlphaLogin = async () => {
     setLoading(true);
+    const formData = new FormData();
+    formData.append('invite_code', inviteCode);
+    formData.append('name', profile.name);
+    formData.append('email', profile.email);
+
     try {
-      await axios.post(`${API_URL}/auth/send-otp?email=${email}`);
-      setStep('verify');
+      const res = await fetch(`${API_URL}/auth/alpha-login`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToken(data.token);
+        localStorage.setItem('alpha_token', data.token);
+        setStep(3);
+        fetchJobs(data.token);
+      } else {
+        alert(data.detail || "Ошибка входа");
+      }
     } catch (e) {
-      console.error(e);
-      alert('Error sending OTP. Check email or console.');
+      alert("Сервер недоступен");
     }
     setLoading(false);
   };
 
-  // 2. Verify OTP
-  const handleVerifyOtp = async () => {
-    setLoading(true);
+  const fetchJobs = async (t) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/verify-otp?email=${email}&code=${otp}`);
-      setToken(res.data.token);
-      setUser(res.data.user);
-      setStep('dashboard');
-      fetchJobs(res.data.token);
-    } catch (e) {
-      alert('Invalid code');
-    }
-    setLoading(false);
+      const res = await fetch(`${API_URL}/jobs?token=${t}`);
+      const data = await res.json();
+      if (Array.isArray(data)) setJobs(data);
+    } catch (e) {}
   };
 
-  // 3. Activate Invite
-  const handleActivate = async () => {
-    try {
-      const res = await axios.post(`${API_URL}/users/activate-invite?token=${token}&code=${inviteCode}`);
-      setUser({ ...user, plan: res.data.plan });
-      alert('Plan activated!');
-    } catch (e) {
-      alert('Invalid or used code');
-    }
-  };
-
-  // 4. Upload File
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);
     const formData = new FormData();
     formData.append('file', file);
-    
+    formData.append('token', token);
+
     try {
-      // Передаем токен как query param, так как в MVP мы сделали так
-      await axios.post(`${API_URL}/jobs/upload?token=${token}`, formData);
-      alert('Book uploaded! Processing started.');
-      setFile(null); // Сброс файла
-      fetchJobs(token);
+      const res = await fetch(`${API_URL}/jobs/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      if (res.ok) {
+        setFile(null);
+        fetchJobs(token);
+        alert("Книга загружена! Перевод начался.");
+      }
     } catch (e) {
-      console.error(e);
-      alert('Upload failed');
+      alert("Ошибка загрузки");
     }
     setLoading(false);
   };
 
-  // 5. Fetch Jobs
-  const fetchJobs = async (t) => {
-    try {
-      const res = await axios.get(`${API_URL}/jobs?token=${t}`);
-      setJobs(res.data);
-    } catch (e) {
-      console.error(e);
-    }
+  const downloadJob = async (jobId) => {
+    const res = await fetch(`${API_URL}/jobs/${jobId}/download?token=${token}`);
+    const data = await res.json();
+    if (data.url) window.open(data.url, '_blank');
   };
-
-  // 6. Download
-  const handleDownload = async (jobId) => {
-    try {
-      const res = await axios.get(`${API_URL}/jobs/${jobId}/download?token=${token}`);
-      window.open(res.data.url, '_blank');
-    } catch (e) {
-      alert('File not ready yet');
-    }
-  };
-
-  // Auto-refresh jobs
-  useEffect(() => {
-    if (step === 'dashboard') {
-      const interval = setInterval(() => fetchJobs(token), 5000);
-      return () => clearInterval(interval);
-    }
-  }, [step, token]);
 
   return (
-    <div className="container">
-      <h1 className="text-2xl font-bold mb-6">AI Book Translator MVP</h1>
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center py-12 px-4 font-sans text-slate-900">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <h1 className="text-2xl font-semibold text-center mb-2">PDF Translator Alpha</h1>
+        <p className="text-slate-500 text-center mb-8 text-sm">Академический перевод книг (MVP)</p>
 
-      {step === 'login' && (
-        <div>
-          <p className="mb-4">Enter your email to login or sign up.</p>
-          <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-          <button onClick={handleSendOtp} disabled={loading}>
-            {loading ? 'Sending...' : 'Send Code'}
-          </button>
-        </div>
-      )}
-
-      {step === 'verify' && (
-        <div>
-          <p className="mb-4">Enter the code sent to {email}</p>
-          <input placeholder="123456" value={otp} onChange={e => setOtp(e.target.value)} />
-          <button onClick={handleVerifyOtp} disabled={loading}>
-            {loading ? 'Verifying...' : 'Login'}
-          </button>
-        </div>
-      )}
-
-      {step === 'dashboard' && user && (
-        <div>
-          <div className="mb-8 p-4 bg-gray-50 rounded">
-            <p><strong>User:</strong> {user.email}</p>
-            <p><strong>Plan:</strong> {user.plan || "No active plan"}</p>
-            
-            {!user.plan && (
-              <div className="mt-4">
-                <p className="text-sm text-red-600 mb-2">Activate a plan to start translating.</p>
-                <input placeholder="Invite Code (e.g. START_S_20)" value={inviteCode} onChange={e => setInviteCode(e.target.value)} />
-                <button onClick={handleActivate}>Activate Plan</button>
-              </div>
-            )}
+        {/* ШАГ 1: ВВОД КОДА */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <input 
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Введите инвайт-код"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+            />
+            <button 
+              onClick={handleCodeSubmit}
+              className="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition"
+            >
+              Продолжить
+            </button>
           </div>
+        )}
 
-          {user.plan && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold mb-4">Upload Book (PDF/EPUB)</h2>
-              <input type="file" onChange={e => setFile(e.target.files[0])} />
-              <button onClick={handleUpload} disabled={loading}>
-                {loading ? 'Uploading...' : 'Translate Book'}
+        {/* ШАГ 2: ПРОФИЛЬ */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <input 
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ваше имя"
+              value={profile.name}
+              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+            />
+            <input 
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Email (для связи)"
+              value={profile.email}
+              onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+            />
+            <button 
+              onClick={handleAlphaLogin}
+              disabled={loading}
+              className="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-slate-400"
+            >
+              {loading ? "Вход..." : "Начать работу"}
+            </button>
+          </div>
+        )}
+
+        {/* ШАГ 3: ЗАГРУЗКА И СПИСОК */}
+        {step === 3 && (
+          <div className="space-y-8">
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
+              <input 
+                type="file" 
+                accept=".pdf,.epub"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="mb-4 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              <button 
+                onClick={handleUpload}
+                disabled={!file || loading}
+                className="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-slate-300"
+              >
+                {loading ? "Загрузка..." : "Загрузить для перевода"}
               </button>
             </div>
-          )}
 
-          <div>
-            <h2 className="text-xl font-bold mb-4">My Translations</h2>
-            {jobs.length === 0 && <p className="text-gray-500">No jobs yet.</p>}
-            {jobs.map(job => (
-              <div key={job.id} className="border p-4 mb-2 rounded flex justify-between items-center">
-                <div>
-                  {/* Исправлено: filename вместо input_filename */}
-                  <p className="font-bold">{job.filename}</p> 
-                  <span className={`status-badge status-${job.status}`}>{job.status}</span>
-                  <span className="text-xs text-gray-400 ml-2">{new Date(job.created_at).toLocaleString()}</span>
+            <div className="space-y-4">
+              <h3 className="font-medium text-slate-700 border-b pb-2">Ваши переводы</h3>
+              {jobs.length === 0 && <p className="text-slate-400 text-sm italic">Здесь пока ничего нет</p>}
+              {jobs.map(job => (
+                <div key={job.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="overflow-hidden mr-2">
+                    <p className="text-sm font-medium truncate">{job.filename}</p>
+                    <p className={`text-xs ${job.status === 'completed' ? 'text-green-600' : 'text-blue-500'}`}>
+                      {job.status === 'completed' ? 'Готово' : 'В процессе...'}
+                    </p>
+                  </div>
+                  {job.status === 'completed' && (
+                    <button 
+                      onClick={() => downloadJob(job.id)}
+                      className="bg-white border border-slate-200 text-xs px-3 py-1 rounded shadow-sm hover:bg-slate-50"
+                    >
+                      Скачать
+                    </button>
+                  )}
                 </div>
-                {/* Исправлено: completed вместо done */}
-                {job.status === 'completed' && (
-                  <button 
-                    onClick={() => handleDownload(job.id)}
-                    className="w-auto px-4 py-1 mb-0 bg-green-600 hover:bg-green-700"
-                  >
-                    Download
-                  </button>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+            
+            <button 
+              onClick={() => { localStorage.clear(); window.location.reload(); }}
+              className="w-full text-xs text-slate-400 hover:text-slate-600"
+            >
+              Выйти (сбросить сессию)
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <p className="mt-8 text-slate-400 text-xs">Alpha Version. For academic use only.</p>
     </div>
   );
 }
