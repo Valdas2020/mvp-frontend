@@ -94,7 +94,7 @@ export default function AlphaPortal() {
     <div className="min-h-screen bg-slate-50 flex flex-col items-center py-12 px-4 font-sans text-slate-900">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
         <h1 className="text-2xl font-semibold text-center mb-2">PDF Translator Alpha</h1>
-        <p className="text-slate-500 text-center mb-8 text-sm">Академический перевод книг (MVP)</p>
+        <p className="text-slate-500 text-center mb-8 text-sm">Перевод книг для личного использования (MVP)</p>
 
         {/* ШАГ 1: ВВОД КОДА */}
         {step === 1 && (
@@ -190,7 +190,7 @@ export default function AlphaPortal() {
           </div>
         )}
       </div>
-      <p className="mt-8 text-slate-400 text-xs">Alpha Version. For academic use only.</p>
+      <p className="mt-8 text-slate-400 text-xs">Alpha Version. For personal and academic use only.</p>
     </div>
   );
 }
