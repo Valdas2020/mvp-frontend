@@ -87,7 +87,7 @@ export default function AlphaPortal() {
   const downloadJob = async (jobId) => {
     const res = await fetch(`${API_URL}/jobs/${jobId}/download?token=${token}`);
     const data = await res.json();
-    if (data.url) window.open(data.url, '_blank');
+    if (data.url) window.location.href(data.url, '_blank');
   };
 
   return (
