@@ -161,25 +161,41 @@ export default function AlphaPortal() {
           {jobs.map((j) => (
             <div
               key={j.id}
-              className="flex justify-between items-center border p-2 rounded"
+              className="flex flex-col border p-3 rounded bg-white shadow-sm"
             >
-              <div className="flex-1 truncate">
-                <span className="font-medium">{j.filename}</span>
-                <span className="ml-2 text-xs text-slate-500">
-                  {j.status === 'queued' && '⏳ В очереди'}
-                  {j.status === 'processing' && '🔄 Переводится...'}
-                  {j.status === 'completed' && '✅ Готово'}
-                  {j.status === 'failed' && '❌ Ошибка'}
+              <div className="flex justify-between items-center">
+                <span className="font-medium truncate max-w-[200px]">{j.filename}</span>
+                {j.status === 'completed' && (
+                  <button
+                    onClick={() => downloadJob(j.id)}
+                    className="text-blue-600 text-sm font-bold hover:underline"
+                  >
+                    Скачать
+                  </button>
+                )}
+              </div>
+              
+              <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center gap-2">
+                  {j.status === 'queued' && (
+                    <span className="flex items-center gap-1">⏳ В очереди</span>
+                  )}
+                  {j.status === 'processing' && (
+                    <span className="flex items-center gap-1 text-blue-600 font-medium">
+                      🔄 Переводится... {j.word_count > 0 ? `(стр. ${j.word_count})` : ''}
+                    </span>
+                  )}
+                  {j.status === 'completed' && (
+                    <span className="flex items-center gap-1 text-green-600">✅ Готово ({j.word_count} стр.)</span>
+                  )}
+                  {j.status === 'failed' && (
+                    <span className="flex items-center gap-1 text-red-600 font-bold">❌ Ошибка</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-400">
+                  {j.created_at ? new Date(j.created_at).toLocaleTimeString() : ''}
                 </span>
               </div>
-              {j.status === 'completed' && (
-                <button
-                  onClick={() => downloadJob(j.id)}
-                  className="text-blue-600 text-sm font-semibold hover:underline"
-                >
-                  Скачать
-                </button>
-              )}
             </div>
           ))}
         </div>
