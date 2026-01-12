@@ -29,6 +29,21 @@ export default function AlphaPortal() {
     }
   }, []);
 
+  // автообновление списка задач (поллинг)
+  useEffect(() => {
+    if (!token) return;
+
+    // Опрашиваем бэкенд каждые 5 секунд, если есть незавершенные задачи
+    const interval = setInterval(() => {
+      const hasPending = jobs.some(j => j.status === 'queued' || j.status === 'processing');
+      if (hasPending || jobs.length === 0) {
+        fetchJobs(token);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [token, jobs]);
+
   // ---------- API ----------
 
   const loginWithInvite = async () => {
@@ -39,9 +54,9 @@ export default function AlphaPortal() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-  invite_code: inviteCode,
-  device_id: deviceId,
-}),
+        invite_code: inviteCode,
+        device_id: deviceId,
+      }),
     });
 
     const data = await res.json();
@@ -58,9 +73,14 @@ export default function AlphaPortal() {
   };
 
   const fetchJobs = async (t) => {
-    const res = await fetch(`${API_URL}/api/jobs?token=${t}`);
-    const data = await res.json();
-    setJobs(data.jobs || []);
+    if (!t) return;
+    try {
+      const res = await fetch(`${API_URL}/api/jobs?token=${t}`);
+      const data = await res.json();
+      setJobs(data.jobs || []);
+    } catch (e) {
+      console.error("Failed to fetch jobs", e);
+    }
   };
 
   const uploadFile = async () => {
@@ -143,11 +163,19 @@ export default function AlphaPortal() {
               key={j.id}
               className="flex justify-between items-center border p-2 rounded"
             >
-              <span className="truncate">{j.filename}</span>
+              <div className="flex-1 truncate">
+                <span className="font-medium">{j.filename}</span>
+                <span className="ml-2 text-xs text-slate-500">
+                  {j.status === 'queued' && '⏳ В очереди'}
+                  {j.status === 'processing' && '🔄 Переводится...'}
+                  {j.status === 'completed' && '✅ Готово'}
+                  {j.status === 'failed' && '❌ Ошибка'}
+                </span>
+              </div>
               {j.status === 'completed' && (
                 <button
                   onClick={() => downloadJob(j.id)}
-                  className="text-blue-600 text-sm"
+                  className="text-blue-600 text-sm font-semibold hover:underline"
                 >
                   Скачать
                 </button>
@@ -161,7 +189,7 @@ export default function AlphaPortal() {
             localStorage.clear();
             window.location.reload();
           }}
-          className="text-xs text-slate-400"
+          className="text-xs text-slate-400 hover:text-slate-600"
         >
           Выйти
         </button>
