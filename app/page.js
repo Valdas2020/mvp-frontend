@@ -1,6 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+const deviceId =
+  typeof window !== "undefined"
+    ? (localStorage.getItem("device_id") ??
+        (() => {
+          const v = crypto.randomUUID();
+          localStorage.setItem("device_id", v);
+          return v;
+        })())
+    : null;
+
 export default function AlphaPortal() {
   const [inviteCode, setInviteCode] = useState('');
   const [token, setToken] = useState(null);
@@ -28,7 +38,10 @@ export default function AlphaPortal() {
     const res = await fetch(`${API_URL}/api/auth/invite-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ invite_code: inviteCode }),
+      body: JSON.stringify({
+  invite_code: inviteCode,
+  device_id: deviceId,
+}),
     });
 
     const data = await res.json();
