@@ -2,9 +2,7 @@
 import { useState, useEffect } from 'react';
 
 export default function AlphaPortal() {
-  const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: App
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [token, setToken] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [file, setFile] = useState(null);
@@ -12,51 +10,39 @@ export default function AlphaPortal() {
 
   const API_URL = "https://mvp-backend-6r1j.onrender.com";
 
-  // restore session
+  // восстановление сессии
   useEffect(() => {
     const saved = localStorage.getItem('alpha_token');
     if (saved) {
       setToken(saved);
-      setStep(3);
       fetchJobs(saved);
     }
   }, []);
 
-  // --- AUTH FLOW ---
+  // ---------- API ----------
 
-  const requestOtp = async () => {
+  const loginWithInvite = async () => {
+    if (!inviteCode) return;
     setLoading(true);
-    const res = await fetch(`${API_URL}/api/auth/request-otp`, {
+
+    const res = await fetch(`${API_URL}/api/auth/invite-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ invite_code: inviteCode }),
     });
-    setLoading(false);
-    if (res.ok) setStep(2);
-    else alert("Ошибка отправки OTP");
-  };
 
-  const verifyOtp = async () => {
-    setLoading(true);
-    const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp })
-    });
     const data = await res.json();
     setLoading(false);
 
-    if (res.ok) {
-      setToken(data.token);
-      localStorage.setItem('alpha_token', data.token);
-      setStep(3);
-      fetchJobs(data.token);
-    } else {
-      alert(data.detail || "Неверный код");
+    if (!res.ok) {
+      alert(data.detail || 'Invalid invite code');
+      return;
     }
-  };
 
-  // --- JOBS ---
+    localStorage.setItem('alpha_token', data.token);
+    setToken(data.token);
+    fetchJobs(data.token);
+  };
 
   const fetchJobs = async (t) => {
     const res = await fetch(`${API_URL}/api/jobs?token=${t}`);
@@ -67,20 +53,22 @@ export default function AlphaPortal() {
   const uploadFile = async () => {
     if (!file) return;
     setLoading(true);
+
     const formData = new FormData();
     formData.append('file', file);
 
     const res = await fetch(`${API_URL}/api/upload?token=${token}`, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
 
     setLoading(false);
+
     if (res.ok) {
       setFile(null);
       fetchJobs(token);
     } else {
-      alert("Ошибка загрузки");
+      alert('Upload failed');
     }
   };
 
@@ -88,64 +76,82 @@ export default function AlphaPortal() {
     window.location.href = `${API_URL}/api/jobs/${id}/download?token=${token}`;
   };
 
-  // --- UI ---
+  // ---------- UI ----------
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="bg-white p-6 rounded-xl w-full max-w-md shadow">
+          <h1 className="text-xl font-semibold mb-4 text-center">
+            PDF Translator — Alpha
+          </h1>
+
+          <input
+            className="w-full border p-3 mb-4 rounded"
+            placeholder="Invite code"
+            value={inviteCode}
+            onChange={(e) => setInviteCode(e.target.value)}
+          />
+
+          <button
+            onClick={loginWithInvite}
+            disabled={loading}
+            className="w-full bg-blue-600 text-white p-3 rounded disabled:bg-slate-400"
+          >
+            {loading ? 'Вход…' : 'Войти'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="bg-white p-6 rounded-xl w-full max-w-md shadow">
+    <div className="min-h-screen flex justify-center bg-slate-50 p-6">
+      <div className="bg-white p-6 rounded-xl w-full max-w-xl shadow space-y-6">
+        <h2 className="text-lg font-semibold">Загрузка книги</h2>
 
-        {step === 1 && (
-          <>
-            <h2 className="text-xl mb-4">Вход</h2>
-            <input
-              className="w-full border p-2 mb-4"
-              placeholder="Email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-            <button onClick={requestOtp} disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded">
-              Отправить код
-            </button>
-          </>
-        )}
+        <input
+          type="file"
+          accept=".pdf,.epub"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
 
-        {step === 2 && (
-          <>
-            <h2 className="text-xl mb-4">Введите код</h2>
-            <input
-              className="w-full border p-2 mb-4"
-              placeholder="OTP"
-              value={otp}
-              onChange={e => setOtp(e.target.value)}
-            />
-            <button onClick={verifyOtp} disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded">
-              Войти
-            </button>
-          </>
-        )}
+        <button
+          onClick={uploadFile}
+          disabled={loading || !file}
+          className="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-slate-400"
+        >
+          {loading ? 'Загрузка…' : 'Загрузить'}
+        </button>
 
-        {step === 3 && (
-          <>
-            <input type="file" onChange={e => setFile(e.target.files[0])} />
-            <button onClick={uploadFile} disabled={loading} className="block mt-4 bg-blue-600 text-white p-2 rounded">
-              Загрузить
-            </button>
-
-            <div className="mt-6 space-y-2">
-              {jobs.map(j => (
-                <div key={j.id} className="flex justify-between border p-2 rounded">
-                  <span>{j.filename}</span>
-                  {j.status === 'completed' && (
-                    <button onClick={() => downloadJob(j.id)} className="text-blue-600">
-                      Скачать
-                    </button>
-                  )}
-                </div>
-              ))}
+        <div className="space-y-2">
+          {jobs.map((j) => (
+            <div
+              key={j.id}
+              className="flex justify-between items-center border p-2 rounded"
+            >
+              <span className="truncate">{j.filename}</span>
+              {j.status === 'completed' && (
+                <button
+                  onClick={() => downloadJob(j.id)}
+                  className="text-blue-600 text-sm"
+                >
+                  Скачать
+                </button>
+              )}
             </div>
-          </>
-        )}
+          ))}
+        </div>
 
+        <button
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+          className="text-xs text-slate-400"
+        >
+          Выйти
+        </button>
       </div>
     </div>
   );
