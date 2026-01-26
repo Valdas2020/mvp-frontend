@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const deviceId =
   typeof window !== "undefined"
@@ -133,6 +134,16 @@ export default function AlphaPortal() {
           >
             {loading ? 'Вход…' : 'Войти'}
           </button>
+
+          <div className="mt-4 pt-4 border-t border-slate-200 text-center">
+            <p className="text-sm text-slate-500 mb-2">Don't have a code?</p>
+            <Link
+              href="/pricing"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Get one here &rarr;
+            </Link>
+          </div>
         </div>
       </div>
     );
