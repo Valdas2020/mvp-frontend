@@ -92,7 +92,7 @@ function PaymentSuccessContent() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <h2 className="text-lg font-semibold text-slate-800">Processing payment...</h2>
           <p className="text-slate-500 text-sm mt-2">Please wait while we confirm your payment</p>
         </div>
@@ -104,7 +104,9 @@ function PaymentSuccessContent() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-red-500 text-5xl mb-4">!</div>
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-500 text-2xl font-bold">!</span>
+          </div>
           <h2 className="text-lg font-semibold text-slate-800 mb-2">Something went wrong</h2>
           <p className="text-slate-500 text-sm mb-6">{error}</p>
           <Link
@@ -122,7 +124,9 @@ function PaymentSuccessContent() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-yellow-500 text-5xl mb-4">...</div>
+          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-yellow-600 text-2xl font-bold">...</span>
+          </div>
           <h2 className="text-lg font-semibold text-slate-800 mb-2">Payment Pending</h2>
           <p className="text-slate-500 text-sm mb-6">
             Your payment is being processed. Please check back in a few minutes.
@@ -144,9 +148,7 @@ function PaymentSuccessContent() {
         {/* Success Icon */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
+            <span className="text-green-500 text-3xl">✓</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-800">Payment Successful!</h1>
           <p className="text-slate-500 mt-2">Thank you for your purchase</p>
@@ -161,17 +163,13 @@ function PaymentSuccessContent() {
             </code>
             <button
               onClick={copyCode}
-              className="p-3 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors"
+              className="p-3 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors flex-shrink-0"
               title="Copy code"
             >
               {copied ? (
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
+                <span className="text-green-600 text-sm font-bold">✓</span>
               ) : (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
+                <span className="text-blue-600 text-sm">Copy</span>
               )}
             </button>
           </div>
@@ -209,7 +207,7 @@ function LoadingFallback() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center">
       <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-        <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <h2 className="text-lg font-semibold text-slate-800">Loading...</h2>
       </div>
     </div>
