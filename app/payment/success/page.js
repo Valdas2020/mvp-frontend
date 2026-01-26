@@ -15,6 +15,7 @@ function PaymentSuccessContent() {
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
     const orderId = searchParams.get('order_id');
+    const cryptoInvoice = searchParams.get('crypto_invoice');
 
     if (sessionId) {
       // Stripe payment
@@ -22,6 +23,9 @@ function PaymentSuccessContent() {
     } else if (orderId) {
       // Wallet Pay payment
       fetchWalletPayOrder(orderId);
+    } else if (cryptoInvoice) {
+      // CryptoBot payment
+      fetchCryptoInvoice(cryptoInvoice);
     } else {
       setError('No payment information found');
       setLoading(false);
@@ -75,6 +79,32 @@ function PaymentSuccessContent() {
       setLoading(false);
     } catch (e) {
       console.error('Error fetching order:', e);
+      setError('Failed to fetch payment status');
+      setLoading(false);
+    }
+  };
+
+  const fetchCryptoInvoice = async (invoiceCode) => {
+    try {
+      const res = await fetch(`${API_URL}/api/cryptobot/invoice/${invoiceCode}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.detail || 'Failed to fetch payment status');
+        setLoading(false);
+        return;
+      }
+
+      if (data.status === 'pending') {
+        // Payment still processing, poll again
+        setTimeout(() => fetchCryptoInvoice(invoiceCode), 2000);
+        return;
+      }
+
+      setPaymentData(data);
+      setLoading(false);
+    } catch (e) {
+      console.error('Error fetching crypto invoice:', e);
       setError('Failed to fetch payment status');
       setLoading(false);
     }

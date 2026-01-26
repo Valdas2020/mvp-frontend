@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const API_URL = "https://mvp-backend-6r1j.onrender.com";
-const TELEGRAM_BOT = "PDFTranslatorBot"; // Change to your bot username
 
 const TIERS = [
   {
@@ -65,9 +64,30 @@ export default function PricingPage() {
     }
   };
 
-  const handleCryptoPayment = (tier) => {
-    // Open Telegram bot with payment command
-    window.open(`https://t.me/${TELEGRAM_BOT}?start=pay_${tier}`, '_blank');
+  const handleCryptoPayment = async (tier, asset = "USDT") => {
+    setLoading(`${tier}_crypto`);
+    try {
+      const res = await fetch(`${API_URL}/api/cryptobot/create-invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, asset }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.detail || 'Failed to create crypto invoice');
+        setLoading(null);
+        return;
+      }
+
+      // Redirect to CryptoBot payment page
+      window.location.href = data.pay_url;
+    } catch (e) {
+      console.error('Crypto payment error:', e);
+      alert('Failed to create crypto invoice');
+      setLoading(null);
+    }
   };
 
   return (
@@ -136,17 +156,26 @@ export default function PricingPage() {
                 {loading === tier.id ? 'Processing...' : 'Pay with Card'}
               </button>
 
-              {/* Crypto Button */}
-              <button
-                onClick={() => handleCryptoPayment(tier.id)}
-                className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <span>Pay with Crypto</span>
-                <span className="text-xs opacity-75">USDT/TON</span>
-              </button>
+              {/* Crypto Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleCryptoPayment(tier.id, "USDT")}
+                  disabled={loading === `${tier.id}_crypto`}
+                  className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 px-3 rounded-lg transition-colors disabled:bg-slate-400"
+                >
+                  {loading === `${tier.id}_crypto` ? '...' : `$${tier.priceUsd} USDT`}
+                </button>
+                <button
+                  onClick={() => handleCryptoPayment(tier.id, "TON")}
+                  disabled={loading === `${tier.id}_crypto`}
+                  className="flex-1 bg-blue-800 hover:bg-blue-900 text-white font-medium py-3 px-3 rounded-lg transition-colors disabled:bg-slate-400"
+                >
+                  {loading === `${tier.id}_crypto` ? '...' : `${tier.priceTon} TON`}
+                </button>
+              </div>
 
               <p className="text-xs text-slate-400 mt-3 text-center">
-                ${tier.priceUsd} USDT or {tier.priceTon} TON
+                via @CryptoBot
               </p>
             </div>
           ))}
