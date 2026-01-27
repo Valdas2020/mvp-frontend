@@ -213,7 +213,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="flex justify-center mt-8">
+        <div className="w-full flex justify-center mt-8">
           <img src="/logo.svg" alt="Logo" width={120} height={120} />
         </div>
       </div>
@@ -346,7 +346,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className="flex justify-center mt-8">
+        <div className="w-full flex justify-center mt-8">
           <img src="/logo.svg" alt="Logo" width={120} height={120} />
         </div>
       </div>

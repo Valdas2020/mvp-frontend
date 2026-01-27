@@ -229,7 +229,7 @@ function PaymentSuccessContent() {
           Сохраните этот код! Он нужен для доступа к переводчику.
         </p>
       </div>
-      <div className="flex justify-center mt-8">
+      <div className="w-full flex justify-center mt-8">
         <img src="/logo.svg" alt="Logo" width={120} height={120} />
       </div>
     </div>
