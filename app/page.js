@@ -179,7 +179,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
           <h1 className="text-3xl font-bold text-center mb-4 text-slate-800">
-            AI-Переводчик PDF-файлов большого объема с английского на русский
+            AI-переводчик PDF-файлов большого объема с английского на русский
           </h1>
           <div className="text-xs text-slate-500 mb-6 text-left bg-slate-50 p-3 rounded-lg">
             <p className="mb-2">
@@ -226,7 +226,7 @@ export default function Home() {
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">AI-Переводчик PDF-файлов большого объема с английского на русский</h1>
+              <h1 className="text-2xl font-bold text-slate-800">AI-переводчик PDF-файлов большого объема с английского на русский</h1>
               <p className="text-slate-600">{user?.email || 'Пользователь'}</p>
             </div>
             <button
