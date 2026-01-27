@@ -173,7 +173,7 @@ function PaymentSuccessContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-slate-50 flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
         {/* Success Icon */}
         <div className="text-center mb-6">
@@ -228,6 +228,9 @@ function PaymentSuccessContent() {
         <p className="text-xs text-slate-400 text-center mt-4">
           Сохраните этот код! Он нужен для доступа к переводчику.
         </p>
+      </div>
+      <div className="mt-8">
+        <img src="/logo.svg" alt="Logo" width={120} height={120} />
       </div>
     </div>
   );

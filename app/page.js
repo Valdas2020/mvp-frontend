@@ -176,11 +176,8 @@ export default function Home() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
-          <div className="flex justify-center mb-6">
-            <img src="/logo.svg" alt="Logo" width={120} height={120} />
-          </div>
           <h1 className="text-3xl font-bold text-center mb-4 text-slate-800">
             AI-Переводчик PDF-файлов большого объема с английского на русский
           </h1>
@@ -216,6 +213,9 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <div className="mt-8">
+          <img src="/logo.svg" alt="Logo" width={120} height={120} />
+        </div>
       </div>
     );
   }
@@ -225,12 +225,9 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <img src="/logo.svg" alt="Logo" width={60} height={60} />
-              <div>
-                <h1 className="text-2xl font-bold text-slate-800">AI-Переводчик PDF-файлов большого объема с английского на русский</h1>
-                <p className="text-slate-600">{user?.email || 'Пользователь'}</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">AI-Переводчик PDF-файлов большого объема с английского на русский</h1>
+              <p className="text-slate-600">{user?.email || 'Пользователь'}</p>
             </div>
             <button
               onClick={() => {
@@ -347,6 +344,10 @@ export default function Home() {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <img src="/logo.svg" alt="Logo" width={120} height={120} />
         </div>
       </div>
     </div>

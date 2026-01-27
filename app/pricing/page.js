@@ -200,6 +200,10 @@ export default function PricingPage() {
             </p>
           </div>
         </div>
+
+        <div className="flex justify-center mt-8">
+          <img src="/logo.svg" alt="Logo" width={120} height={120} />
+        </div>
       </div>
     </div>
   );
