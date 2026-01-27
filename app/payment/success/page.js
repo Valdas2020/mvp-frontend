@@ -230,7 +230,7 @@ function PaymentSuccessContent() {
         </p>
       </div>
       <div className="flex justify-center mb-6">
-        <img src="/logo.svg" alt="Logo" className="w-[120px] h-[120px]" />
+        <img src="/logo.svg" alt="Logo" style={{ width: '120px', height: '120px', maxWidth: '120px', maxHeight: '120px' }} />
       </div>
     </div>
   );
