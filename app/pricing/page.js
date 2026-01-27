@@ -201,8 +201,8 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div className="w-full flex justify-center mt-8">
-          <img src="/logo.svg" alt="Logo" width={120} height={120} />
+        <div className="flex justify-center mb-6">
+          <img src="/logo.svg" alt="Logo" className="w-[120px] h-[120px]" />
         </div>
       </div>
     </div>
