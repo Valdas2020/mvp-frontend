@@ -24,6 +24,19 @@ export default function Home() {
     }
   }, []);
 
+  // Polling for job updates
+  useEffect(() => {
+    if (!token) return;
+    const hasPending = jobs.some(j => j.status === 'queued' || j.status === 'processing');
+    if (!hasPending) return;
+
+    const interval = setInterval(() => {
+      fetchJobs(token);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [token, jobs]);
+
   const fetchUserInfo = async (t) => {
     try {
       const res = await fetch(`${API_URL}/api/user/info?token=${t}`);
@@ -67,16 +80,16 @@ export default function Home() {
         fetchJobs(data.token);
       } else {
         const err = await res.json();
-        alert(err.detail || 'Login failed');
+        alert(err.detail || 'Ошибка входа');
       }
     } catch (err) {
-      alert('Network error');
+      alert('Ошибка сети');
     }
   };
 
   const handleUpload = async () => {
     if (!file) {
-      alert('Please select a file');
+      alert('Выберите файл');
       return;
     }
 
@@ -91,15 +104,15 @@ export default function Home() {
       });
 
       if (res.ok) {
-        alert('File uploaded! Translation started.');
+        alert('Файл загружен! Перевод начался.');
         setFile(null);
         fetchJobs(token);
       } else {
         const err = await res.json();
-        alert(err.detail || 'Upload failed');
+        alert(err.detail || 'Ошибка загрузки');
       }
     } catch (err) {
-      alert('Network error');
+      alert('Ошибка сети');
     } finally {
       setUploading(false);
     }
@@ -116,10 +129,10 @@ export default function Home() {
         a.download = `translated_${filename}.txt`;
         a.click();
       } else {
-        alert('Download failed');
+        alert('Ошибка скачивания');
       }
     } catch (err) {
-      alert('Network error');
+      alert('Ошибка сети');
     }
   };
 
@@ -143,9 +156,16 @@ export default function Home() {
   };
 
   const tierConfig = {
-    S: { words: 60000, label: 'Tier S' },
-    M: { words: 200000, label: 'Tier M' },
-    L: { words: 500000, label: 'Tier L (coming soon)' },
+    S: { words: 60000, label: 'Тариф S' },
+    M: { words: 200000, label: 'Тариф M' },
+    L: { words: 500000, label: 'Тариф L (скоро)' },
+  };
+
+  const statusLabels = {
+    queued: 'В очереди',
+    processing: 'Переводится...',
+    completed: 'Готово',
+    failed: 'Ошибка',
   };
 
   const currentTier = user?.tier ? tierConfig[user.tier] : null;
@@ -162,14 +182,14 @@ export default function Home() {
             <img src="/logo.svg" alt="Logo" width={120} height={120} />
           </div>
           <h1 className="text-3xl font-bold text-center mb-2 text-slate-800">
-            PDF Translator
+            PDF Переводчик
           </h1>
           <p className="text-center text-slate-600 mb-6">
-            Translate books with structure preserved
+            Перевод книг с сохранением структуры
           </p>
           <input
             type="text"
-            placeholder="Enter invite code"
+            placeholder="Введите инвайт-код"
             value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -178,16 +198,16 @@ export default function Home() {
             onClick={handleLogin}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
           >
-            Login
+            Войти
           </button>
 
           <div className="mt-6 pt-6 border-t border-slate-200 text-center">
-            <p className="text-sm text-slate-500 mb-2">Don't have a code?</p>
+            <p className="text-sm text-slate-500 mb-2">Нет кода?</p>
             <Link
               href="/pricing"
               className="text-blue-600 hover:underline font-medium"
             >
-              Get one here →
+              Получить здесь →
             </Link>
           </div>
         </div>
@@ -203,8 +223,8 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <img src="/logo.svg" alt="Logo" width={60} height={60} />
               <div>
-                <h1 className="text-2xl font-bold text-slate-800">PDF Translator</h1>
-                <p className="text-slate-600">{user?.email || 'Anonymous'}</p>
+                <h1 className="text-2xl font-bold text-slate-800">PDF Переводчик</h1>
+                <p className="text-slate-600">{user?.email || 'Пользователь'}</p>
               </div>
             </div>
             <button
@@ -215,14 +235,14 @@ export default function Home() {
               }}
               className="px-4 py-2 text-slate-600 hover:text-slate-800 transition"
             >
-              Logout
+              Выйти
             </button>
           </div>
         </div>
 
         <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-lg">
           <p className="text-sm text-amber-800">
-            ⚠️ <strong>Personal use only.</strong> Upload only books you own or have permission to translate.
+            <strong>Только для личного использования.</strong> Загружайте только книги, которыми владеете или имеете разрешение на перевод.
           </p>
         </div>
 
@@ -231,7 +251,7 @@ export default function Home() {
             <div className="flex justify-between items-center mb-2">
               <span className="text-slate-700 font-semibold">{currentTier.label}</span>
               <span className="text-slate-600 text-sm">
-                {usedWords.toLocaleString()} / {currentTier.words.toLocaleString()} words
+                {usedWords.toLocaleString()} / {currentTier.words.toLocaleString()} слов
               </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
@@ -244,7 +264,7 @@ export default function Home() {
         )}
 
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">Upload Book</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Загрузить книгу</h2>
           <div
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -264,18 +284,18 @@ export default function Home() {
             <label htmlFor="file-input" className="cursor-pointer">
               <div className="text-4xl mb-2">📄</div>
               <p className="text-slate-600 mb-2">
-                {file ? file.name : 'Drag & drop or click to select'}
+                {file ? file.name : 'Перетащите файл или нажмите для выбора'}
               </p>
-              <p className="text-sm text-slate-500">PDF or EPUB (max 80MB)</p>
+              <p className="text-sm text-slate-500">PDF или EPUB (макс. 80МБ)</p>
             </label>
           </div>
 
           <div className="mt-4">
             <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Glossary (optional)
+              Глоссарий (опционально)
             </label>
             <textarea
-              placeholder="term1 = перевод1&#10;term2 = перевод2"
+              placeholder="термин1 = перевод1&#10;термин2 = перевод2"
               value={glossary}
               onChange={(e) => setGlossary(e.target.value)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -288,14 +308,14 @@ export default function Home() {
             disabled={!file || uploading}
             className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-slate-300 disabled:cursor-not-allowed"
           >
-            {uploading ? 'Uploading...' : 'Upload & Translate'}
+            {uploading ? 'Загрузка...' : 'Загрузить и перевести'}
           </button>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">Translation Jobs</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Задания на перевод</h2>
           {jobs.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">No jobs yet</p>
+            <p className="text-slate-500 text-center py-8">Пока нет заданий</p>
           ) : (
             <div className="space-y-3">
               {jobs.map((job) => (
@@ -306,8 +326,8 @@ export default function Home() {
                   <div>
                     <p className="font-semibold text-slate-800">{job.filename}</p>
                     <p className="text-sm text-slate-600">
-                      Status: <span className="font-medium">{job.status}</span>
-                      {job.word_count && ` • ${job.word_count.toLocaleString()} words`}
+                      Статус: <span className="font-medium">{statusLabels[job.status] || job.status}</span>
+                      {job.word_count && ` • ${job.word_count.toLocaleString()} слов`}
                     </p>
                   </div>
                   {job.status === 'completed' && (
@@ -315,7 +335,7 @@ export default function Home() {
                       onClick={() => handleDownload(job.id, job.filename)}
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                     >
-                      Download
+                      Скачать
                     </button>
                   )}
                 </div>
