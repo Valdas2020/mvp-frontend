@@ -214,7 +214,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex justify-center mb-6">
-          <img src="/logo.svg" alt="Logo" style={{ width: '120px', height: '120px', maxWidth: '120px', maxHeight: '120px' }} />
+          <center><img src="/logo.svg" alt="Logo" style={{ width: '120px', height: '120px', maxWidth: '120px', maxHeight: '120px' }} /></center>
         </div>
       </div>
     );
