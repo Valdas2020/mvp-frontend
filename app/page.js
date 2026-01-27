@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Link from 'next/link';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -159,7 +159,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
           <div className="flex justify-center mb-6">
-            <Image src="/logo.svg" alt="Logo" width={120} height={120} priority />
+            <img src="/logo.svg" alt="Logo" width={120} height={120} />
           </div>
           <h1 className="text-3xl font-bold text-center mb-2 text-slate-800">
             PDF Translator
@@ -180,6 +180,16 @@ export default function Home() {
           >
             Login
           </button>
+
+          <div className="mt-6 pt-6 border-t border-slate-200 text-center">
+            <p className="text-sm text-slate-500 mb-2">Don't have a code?</p>
+            <Link
+              href="/pricing"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Get one here →
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -191,7 +201,7 @@ export default function Home() {
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Image src="/logo.svg" alt="Logo" width={60} height={60} />
+              <img src="/logo.svg" alt="Logo" width={60} height={60} />
               <div>
                 <h1 className="text-2xl font-bold text-slate-800">PDF Translator</h1>
                 <p className="text-slate-600">{user?.email || 'Anonymous'}</p>
