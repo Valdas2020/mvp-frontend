@@ -181,12 +181,17 @@ export default function Home() {
           <div className="flex justify-center mb-6">
             <img src="/logo.svg" alt="Logo" width={120} height={120} />
           </div>
-          <h1 className="text-3xl font-bold text-center mb-2 text-slate-800">
+          <h1 className="text-3xl font-bold text-center mb-4 text-slate-800">
             PDF Переводчик
           </h1>
-          <p className="text-center text-slate-600 mb-6">
-            Перевод книг с сохранением структуры
-          </p>
+          <div className="text-xs text-slate-500 mb-6 text-left bg-slate-50 p-3 rounded-lg">
+            <p className="mb-2">
+              <strong>Дисклеймер:</strong> Мы не библиотека, мы не храним ваши файлы. Предоставленный pdf-файл уничтожается немедленно после перевода, txt-файл с переводом хранится 24 часа с момента окончания перевода.
+            </p>
+            <p>
+              Ответственность за соблюдение авторских прав на предоставленные к переводу материалы целиком берет на себя пользователь. Загружая файл, пользователь подтверждает, что будет использовать перевод только лично, не для публикации.
+            </p>
+          </div>
           <input
             type="text"
             placeholder="Введите инвайт-код"
