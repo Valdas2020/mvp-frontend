@@ -228,7 +228,7 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <img src="/logo.svg" alt="Logo" width={60} height={60} />
               <div>
-                <h1 className="text-2xl font-bold text-slate-800">PDF Переводчик</h1>
+                <h1 className="text-2xl font-bold text-slate-800">PDF Переводчик с английского на русский</h1>
                 <p className="text-slate-600">{user?.email || 'Пользователь'}</p>
               </div>
             </div>
