@@ -123,8 +123,8 @@ function PaymentSuccessContent() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h2 className="text-lg font-semibold text-slate-800">Processing payment...</h2>
-          <p className="text-slate-500 text-sm mt-2">Please wait while we confirm your payment</p>
+          <h2 className="text-lg font-semibold text-slate-800">Обработка платежа...</h2>
+          <p className="text-slate-500 text-sm mt-2">Пожалуйста, подождите, мы подтверждаем ваш платёж</p>
         </div>
       </div>
     );
@@ -137,13 +137,13 @@ function PaymentSuccessContent() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-red-500 text-2xl font-bold">!</span>
           </div>
-          <h2 className="text-lg font-semibold text-slate-800 mb-2">Something went wrong</h2>
+          <h2 className="text-lg font-semibold text-slate-800 mb-2">Что-то пошло не так</h2>
           <p className="text-slate-500 text-sm mb-6">{error}</p>
           <Link
             href="/pricing"
             className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            Try Again
+            Попробовать снова
           </Link>
         </div>
       </div>
@@ -157,15 +157,15 @@ function PaymentSuccessContent() {
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-yellow-600 text-2xl font-bold">...</span>
           </div>
-          <h2 className="text-lg font-semibold text-slate-800 mb-2">Payment Pending</h2>
+          <h2 className="text-lg font-semibold text-slate-800 mb-2">Платёж в обработке</h2>
           <p className="text-slate-500 text-sm mb-6">
-            Your payment is being processed. Please check back in a few minutes.
+            Ваш платёж обрабатывается. Пожалуйста, обновите страницу через пару минут.
           </p>
           <button
             onClick={() => window.location.reload()}
             className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            Refresh
+            Обновить
           </button>
         </div>
       </div>
@@ -180,13 +180,13 @@ function PaymentSuccessContent() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-green-500 text-3xl">✓</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Payment Successful!</h1>
-          <p className="text-slate-500 mt-2">Thank you for your purchase</p>
+          <h1 className="text-2xl font-bold text-slate-800">Оплата успешна!</h1>
+          <p className="text-slate-500 mt-2">Спасибо за покупку</p>
         </div>
 
         {/* Code Display */}
         <div className="bg-slate-50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-slate-500 mb-2">Your activation code:</p>
+          <p className="text-sm text-slate-500 mb-2">Ваш код активации:</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 bg-white border border-slate-200 rounded px-4 py-3 text-xl font-mono font-bold text-slate-800 text-center">
               {paymentData.invite_code}
@@ -194,12 +194,12 @@ function PaymentSuccessContent() {
             <button
               onClick={copyCode}
               className="p-3 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors flex-shrink-0"
-              title="Copy code"
+              title="Скопировать"
             >
               {copied ? (
                 <span className="text-green-600 text-sm font-bold">✓</span>
               ) : (
-                <span className="text-blue-600 text-sm">Copy</span>
+                <span className="text-blue-600 text-sm">Копировать</span>
               )}
             </button>
           </div>
@@ -208,11 +208,11 @@ function PaymentSuccessContent() {
         {/* Plan Details */}
         <div className="border-t border-slate-200 pt-4 mb-6">
           <div className="flex justify-between text-sm mb-2">
-            <span className="text-slate-500">Plan:</span>
-            <span className="font-medium text-slate-800">Tier {paymentData.tier}</span>
+            <span className="text-slate-500">Тариф:</span>
+            <span className="font-medium text-slate-800">Тариф {paymentData.tier}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Words:</span>
+            <span className="text-slate-500">Слов:</span>
             <span className="font-medium text-slate-800">{paymentData.quota_words?.toLocaleString()}</span>
           </div>
         </div>
@@ -222,11 +222,11 @@ function PaymentSuccessContent() {
           href="/"
           className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-medium py-3 px-4 rounded-lg transition-colors"
         >
-          Start Translating
+          Начать перевод
         </Link>
 
         <p className="text-xs text-slate-400 text-center mt-4">
-          Save this code! You&apos;ll need it to access the translator.
+          Сохраните этот код! Он нужен для доступа к переводчику.
         </p>
       </div>
     </div>

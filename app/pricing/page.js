@@ -70,7 +70,7 @@ export default function PricingPage() {
       const res = await fetch(`${API_URL}/api/cryptobot/create-invoice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, asset }),
+        body: JSON.stringify({ tier, asset, email: email || null }),
       });
 
       const data = await res.json();
@@ -96,20 +96,20 @@ export default function PricingPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <Link href="/" className="text-blue-600 hover:underline text-sm mb-4 inline-block">
-            &larr; Back to Translator
+            &larr; Назад к переводчику
           </Link>
           <h1 className="text-3xl font-bold text-slate-800 mb-4">
-            Choose Your Plan
+            Выберите тариф
           </h1>
           <p className="text-slate-600 max-w-xl mx-auto">
-            One-time purchase. No subscription. Use your word quota whenever you need it.
+            Разовая покупка. Без подписки. Используйте лимит слов когда вам удобно.
           </p>
         </div>
 
-        {/* Email input (optional) */}
+        {/* Email input for invite code delivery */}
         <div className="max-w-md mx-auto mb-8">
           <label className="block text-sm text-slate-600 mb-2">
-            Email (optional, for receipt)
+            Email (код активации будет отправлен на указанный адрес)
           </label>
           <input
             type="email"
@@ -131,12 +131,12 @@ export default function PricingPage() {
             >
               {tier.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
-                  Most Popular
+                  Популярный
                 </div>
               )}
 
               <h2 className="text-xl font-bold text-slate-800 mb-2">{tier.name}</h2>
-              <p className="text-slate-500 text-sm mb-4">Tier {tier.id}</p>
+              <p className="text-slate-500 text-sm mb-4">Тариф {tier.id}</p>
 
               <div className="mb-6">
                 <span className="text-4xl font-bold text-slate-800">{tier.priceEur}</span>
@@ -144,7 +144,7 @@ export default function PricingPage() {
               </div>
 
               <div className="text-slate-600 mb-6">
-                <span className="font-semibold text-slate-800">{tier.words}</span> words
+                <span className="font-semibold text-slate-800">{tier.words}</span> слов
               </div>
 
               {/* Stripe Button */}
@@ -153,7 +153,7 @@ export default function PricingPage() {
                 disabled={loading === tier.id}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg mb-3 disabled:bg-slate-400 transition-colors"
               >
-                {loading === tier.id ? 'Processing...' : 'Pay with Card'}
+                {loading === tier.id ? 'Обработка...' : 'Оплатить картой'}
               </button>
 
               {/* Crypto Buttons */}
@@ -183,19 +183,19 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <div className="bg-white rounded-xl shadow p-6 max-w-2xl mx-auto">
-          <h3 className="font-bold text-slate-800 mb-4">How it works</h3>
+          <h3 className="font-bold text-slate-800 mb-4">Как это работает</h3>
           <ol className="list-decimal list-inside space-y-2 text-slate-600 text-sm">
-            <li>Choose a plan and complete payment</li>
-            <li>Receive your unique activation code</li>
-            <li>Enter the code on the translator page</li>
-            <li>Upload PDFs and get translations!</li>
+            <li>Выберите тариф и произведите оплату</li>
+            <li>Получите уникальный код активации на email</li>
+            <li>Введите код на странице переводчика</li>
+            <li>Загружайте PDF и получайте переводы!</li>
           </ol>
 
           <div className="mt-6 pt-4 border-t border-slate-200">
             <p className="text-xs text-slate-500">
-              Already have a code?{' '}
+              Уже есть код?{' '}
               <Link href="/" className="text-blue-600 hover:underline">
-                Enter it here
+                Введите его здесь
               </Link>
             </p>
           </div>

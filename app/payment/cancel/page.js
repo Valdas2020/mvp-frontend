@@ -12,9 +12,9 @@ export default function PaymentCancelPage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-slate-800 mb-2">Payment Cancelled</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-2">Оплата отменена</h1>
         <p className="text-slate-500 mb-6">
-          Your payment was not completed. No charges were made.
+          Платёж не был завершён. Деньги не списаны.
         </p>
 
         <div className="space-y-3">
@@ -22,19 +22,19 @@ export default function PaymentCancelPage() {
             href="/pricing"
             className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
           >
-            Try Again
+            Попробовать снова
           </Link>
 
           <Link
             href="/"
             className="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-4 rounded-lg transition-colors"
           >
-            Back to Home
+            На главную
           </Link>
         </div>
 
         <p className="text-xs text-slate-400 mt-6">
-          Having trouble? Contact support for help.
+          Возникли проблемы? Свяжитесь с поддержкой.
         </p>
       </div>
     </div>
