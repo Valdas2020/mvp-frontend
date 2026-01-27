@@ -247,7 +247,7 @@ export default function Home() {
 
         <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-lg">
           <p className="text-sm text-amber-800">
-            <strong>Только для личного использования.</strong> Загружайте только книги, которыми владеете или имеете разрешение на перевод.
+            <strong>Только для личного использования.</strong> 
           </p>
         </div>
 
@@ -269,7 +269,7 @@ export default function Home() {
         )}
 
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">Загрузить книгу</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Загрузить PDF</h2>
           <div
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
