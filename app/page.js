@@ -182,7 +182,7 @@ export default function Home() {
             <img src="/logo.svg" alt="Logo" width={120} height={120} />
           </div>
           <h1 className="text-3xl font-bold text-center mb-4 text-slate-800">
-            PDF Переводчик
+            PDF Переводчик с английского на русский
           </h1>
           <div className="text-xs text-slate-500 mb-6 text-left bg-slate-50 p-3 rounded-lg">
             <p className="mb-2">
@@ -291,7 +291,7 @@ export default function Home() {
               <p className="text-slate-600 mb-2">
                 {file ? file.name : 'Перетащите файл или нажмите для выбора'}
               </p>
-              <p className="text-sm text-slate-500">PDF или EPUB (макс. 80МБ)</p>
+              <p className="text-sm text-slate-500">PDF (макс. 80МБ)</p>
             </label>
           </div>
 
