@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'AI Book Translator MVP',
+  title: 'AI PDF Translator MVP',
   description: 'Translate PDFs preserving structure',
 }
 
