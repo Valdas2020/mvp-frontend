@@ -329,7 +329,7 @@ export default function Home() {
                     <p className="font-semibold text-slate-800">{job.filename}</p>
                     <p className="text-sm text-slate-600">
                       Статус: <span className="font-medium">{statusLabels[job.status] || job.status}</span>
-                      {job.word_count && ` • ${job.word_count.toLocaleString()} слов`}
+                      {job.word_count && ` • ${job.word_count.toLocaleString()} стр.`}
                     </p>
                   </div>
                   {job.status === 'completed' && (
