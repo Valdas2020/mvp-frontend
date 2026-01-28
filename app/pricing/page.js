@@ -201,7 +201,34 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div className="flex justify-center mb-6">
+        {/* Useful Tools */}
+        <div className="bg-white rounded-xl shadow p-6 max-w-2xl mx-auto mt-6">
+          <h3 className="font-bold text-slate-800 mb-4">Полезные инструменты</h3>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a
+                href="https://pdfwordcounter.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Померить количество слов в PDF-файле
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.ilovepdf.com/split_pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Разделить PDF-файл на части
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex justify-center mb-6 mt-6">
           <img src="/logo.svg" alt="Logo" style={{ width: '120px', height: '120px', maxWidth: '120px', maxHeight: '120px' }} />
         </div>
       </div>
