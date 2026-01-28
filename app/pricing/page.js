@@ -93,11 +93,29 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
+        {/* Back link */}
+        <div className="text-center mb-8">
           <Link href="/" className="text-blue-600 hover:underline text-sm mb-4 inline-block">
             &larr; Назад к переводчику
           </Link>
+        </div>
+
+        {/* Trial Section */}
+        <div className="bg-white rounded-xl shadow p-6 max-w-2xl mx-auto mb-12">
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Оценить качество перевода</h2>
+          <p className="text-slate-600 mb-4">
+            Используйте этот код для экспресс-теста — перевод пяти страниц любого документа:
+          </p>
+          <div className="bg-slate-100 rounded-lg p-4 text-center">
+            <code className="text-2xl font-mono font-bold text-blue-600">TEST</code>
+          </div>
+          <p className="text-sm text-slate-500 mt-3 text-center">
+            Введите код на <Link href="/" className="text-blue-600 hover:underline">главной странице</Link>
+          </p>
+        </div>
+
+        {/* Header */}
+        <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-slate-800 mb-4">
             Выберите тариф
           </h1>
